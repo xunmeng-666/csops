@@ -1,0 +1,145 @@
+{% extends 'bash/bash-index.html' %}
+{% block head%}
+
+{% endblock %}
+{% block centent %}
+{% load deploy_tag %}
+<div id="content-header">
+    <ol class="breadcrumb" style="background-color: #ffffff">
+        <a href="/" class="tip-bottom" data-original-title="Go to Home"><i class="icon-home"></i>Home </a>>
+        <a href="/asset/{{ app_name }}/{{ model_name }}/" class="tip-bottom" data-original-title="">{% build_project_name admin_class %}</a>>
+        <a href="/asset/{{ app_name }}/{{ model_name }}/ADD{% build_project_name admin_class %}" title="添加{% build_project_name admin_class %}" class="tip-bottom" data-original-title="">添加{% build_project_name admin_class %}</a>
+    </ol>
+    <div class="col-lg-12 class-title">
+        <div class="ibox float-e-margins" id="all">
+            <div class="quick-actions">
+                <h4>添加{% build_project_verbose_name admin_class %}</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title span10" style="border: 0px solid">
+                    <ul class="nav nav-tabs col-sm-5" >
+                        <li role="navigation" class="active"><a href="#alert-tab" data-toggle="tab">逐条添加</a></li>
+                        <li role="navigation"><a href="#note-tab" data-toggle="tab">批量添加</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="span12" style="width: 90%">
+            <div class="widget-box">
+                <div id="generalTabContent" class="tab-content responsive">
+                    <div id="alert-tab" class="tab-pane fade in active">
+                         <form method="post">{% csrf_token %}
+                            <div class="modal-body">
+                                <div class="modal-body" >
+                                     <form class="form-horizontal" method="post">{% csrf_token %}
+                                    {% for field in form_obj %}
+
+                                        <div class="form-group " id="div_{{ field.name }}">
+                                            <label class=" span1" id="{{ field.name }}" style="width: 9%;font-size: 12px">{{ field.label }}：</label>
+                                            {% if field.name == 'problem' %}
+                                                <textarea name="problem" maxlength="64" class="form-control" id="id_problem"></textarea>
+                                            {% elif field.name == 'resolvent' %}
+                                                <textarea name="resolvent" maxlength="128" class="form-control" id="id_resolvent"></textarea>
+                                            {% elif field.name == 'nextresolvent' %}
+                                                <textarea name="nextresolvent" maxlength="128" class="form-control" id="id_nextresolvent"></textarea>
+                                            {% elif field.name == 'testing_job' %}
+                                                <textarea name="testing_job" maxlength="128" class="form-control" id="id_testing_job"></textarea>
+                                            {% elif field.name == 'testing_job' %}
+                                                <textarea name="testing_job" maxlength="128" class="form-control" id="id_testing_job"></textarea>
+                                            {% else %}
+                                            {{ field }}
+                                            {% endif %}
+                                            <span style="color: red" id="{{ field.name }}_errors">{{ field.errors.0 }}  </span>
+                                        </div>
+                                        <br>
+                                    {% endfor %}
+                                     </form>
+                                </div>
+                                 <div class="form-group">
+                                    <div class="span8">
+                                        <input type="submit" class="btn btn-info" value="保存">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="note-tab" class="tab-pane fade" >
+                        <p>请下载Excel文件, 按照格式填写主机信息, 上传导入. <a href="/asset/{{ app_name }}/{{ model_name }}/download/" style="color: #1a1ad2">点击下载模板</a></p>
+                        <p></p>
+                        <form id="upfile" action="/asset/{{ app_name }}/{{ model_name }}/upload/" method="post" enctype="multipart/form-data" target="file">
+                            <input  type="file" name="upfile" />
+                            <input type="submit" value="导入配置" class="btn-success btn btn-sm" >
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="/static/js/laydate.js"></script>
+<script>
+$(function () {
+    setTimedir();
+    timeOut();
+    setTime();
+})
+function display_div(status) {
+    if ($("#div_timeout_cause")){
+        document.getElementById("div_timeout_cause").style.display=status;
+        document.getElementById("div_resolventplan").style.display=status;
+        document.getElementById("div_nextresolvent").style.display=status;
+        document.getElementById("div_testing_job").style.display=status;
+        document.getElementById("div_dev_job").style.display=status;
+        document.getElementById("div_estimate_time").style.display=status;
+        document.getElementById("div_refailure").style.display=status;
+        document.getElementById("div_resolve_time").style.display=status;
+    }
+}
+
+function setTimedir() {
+
+}
+
+function timeOut() {
+    var timeout = document.getElementById('id_timeout');
+    if ($("#id_timeout").is(':checked')){
+
+        display_div('block')
+    }else {
+        display_div('none')
+    }
+}
+
+$("#id_timeout").change(function () {
+    if ($("#id_timeout").is(':checked')){
+    display_div('block')
+    }else {
+        display_div('none')
+    }
+})
+
+function setTime() {
+    laydate.render({
+    elem: '#id_estimate_time',
+    type: 'datetime'
+    })
+
+    laydate.render({
+        elem: '#id_resolve_time',
+        type: 'datetime'
+    })
+}
+
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+
+{% extends "bash/bash-index.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/matrix-media.css" />
+{% endblock %}
+{% block centent %}
+
+
+<!--breadcrumbs-->
+<div id="content-header">
+    <div id="breadcrumb"> <a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a></div>
+</div>
+<div class="col-sm-12">
+    <div class="ibox float-e-margins" id="all">
+        <div class="quick-actions">
+            <h3>工单系统</h3>
+            <p></p>
+        </div>
+
+        <div class="row-fluid">
+            <div class="quick-actions_homepage">
+                <ul class="quick-actions">
+                    <li class="bg_lb"> <a href="/apps/job/list/"> <i class="icon-home"></i> 工单
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function edit_cluster() {
+
+        var cid = $("this td:eq(1)").text();
+    }
+
+</script>
+
+{% endblock %}

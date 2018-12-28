@@ -1,0 +1,90 @@
+{% extends 'bash/bash-index.html' %}
+{% block head%}
+
+{% endblock %}
+{% block centent %}
+{% load deploy_tag %}
+<div id="content-header">
+    <ol class="breadcrumb" style="background-color: #ffffff">
+        <a href="/" class="tip-bottom" data-original-title="Go to Home"><i class="icon-home"></i>Home </a>>
+        <a href="/apps/{{ model_name }}/list/" class="tip-bottom" data-original-title="">{% build_project_verbose_name admin_class %}</a>>
+        <a href="/apps/{{ model_name }}/detail/{{ number }}/" title="数据中心信息表" class="tip-bottom" data-original-title="">
+            {% build_project_verbose_name admin_class %}>{{ number }}详情表</a>
+    </ol>
+    <div class="col-lg-12 class-title">
+        <div class="ibox float-e-margins" id="all">
+            <div class="quick-actions">
+                <h2>{% build_project_verbose_name admin_class %}详情</h2>
+            </div>
+
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="widget-box">
+                            <div class="widget-content">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>名称</th>
+                                        <th>属性</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in form_obj %}
+                                        {% build_job_detail admin_class row %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<script>
+
+function all_del_file(self) {
+    var check = document.getElementsByName("_selected_obj");
+    var len = check.length;
+    var idAll = "";
+    for (var i = 0; i<len;i++){
+        if(check[i].checked){
+            idAll += check[i].value+',';
+        }
+    }
+    if(idAll == ''){
+        var td_id = $(this).closest('tr').find('th').eq(1).text();
+        idAll = td_id + ',' ;
+    }
+    console.log('idall',idAll);
+    $.ajax({
+        url:"/asset/{{ app_name }}/{{ model_name }}/del/?idAll=" + idAll,
+        type: 'post',
+        success:function (data) {
+            alert('删除成功',data);
+            location.reload(true)
+        }
+    })
+}
+
+
+function checkAll(self) {
+    if ( $(self).prop('checked')){
+
+        $("table .row-obj").prop('checked',true)
+    }else {
+         $("table .row-obj").prop('checked',false)
+    }
+
+}
+
+</script>
+{% endblock %}

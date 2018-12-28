@@ -1,0 +1,347 @@
+{% extends 'bash/bash-index.html' %}
+{% block head%}
+
+{% endblock %}
+{% block centent %}
+{% load deploy_tag %}
+<div id="content-header">
+    <div id="breadcrumb">
+        <a href="/" class="tip-bottom" data-original-title="Go to Home"><i class="icon-home"></i>Home </a>>
+        <a href="/apps/job/list/" class="tip-bottom" data-original-title="">{% build_project_name admin_class %}</a>>
+        <a href="/apps/job/list/" title="数据中心信息表" class="tip-bottom" data-original-title="">机房信息表</a>
+    </div>
+    {% get_filter_condtions_string filter_conditions q_val as  filter_condtions_string %}
+    <div class="col-lg-12 class-title">
+        <div class="ibox float-e-margins" id="all">
+            <div class="quick-actions">
+                <h2>{% build_project_verbose_name admin_class %}</h2>
+            </div>
+            <div class="row-fluid">
+                <div class="span9">
+                    <div class="col-sm-1">
+                        <a href="/apps/{{ model_name }}/add/" class="btn btn-success btn-sm">添加{% build_project_verbose_name admin_class %}</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <form >
+                        <div id="search" style="top: 107px;">
+                            <input type="search" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                            <button type="submit" class="tip-bottom" data-original-title="Search"><i class="icon-search icon-white"></i></button>
+                        </div>
+                        {% if model_name == 'job' %}
+                            <div class="span5" style="margin-left: 0px" >
+                            {% for filter_column in admin_class.list_search_filter %}
+                                {% if filter_column == 'timeout' %}
+                                <div class="span2" style="width: 6.529915%">
+                                    <div class="col-lg-2 text-center">
+                                        <a >超时</a>
+                                        {% build_filter_ele filter_column admin_class filter_conditions %}
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="span3" style="width: 15.529915%">
+                                    <div class="col-lg-2 text-center">
+                                        <a >{% if filter_column == 'status' %}状态
+                                        {% elif filter_column == 'resolvents' %}解决方案
+                                        {% elif filter_column == 'problem_type' %}问题分类
+                                        {% endif %}</a>
+                                        {% build_filter_ele filter_column admin_class filter_conditions %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="span3" style="width: 14.529915%">
+                                <div class="col-lg-3 text-center">
+                                <a>日期筛选</a>
+                                <select class="form-control" style="width: 85px" id="screendate">
+                                    <option value="">--------</option>
+                                    <option value="three">3天</option>
+                                    <option value="seven">7天</option>
+                                    <option value="fifteen">15天</option>
+                                    <option value="thirty">一个月</option>
+                                    <option value="six_months">六个月</option>
+                                    <option value="one_year">一年</option>
+                                </select>
+                            </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if admin_class.list_filter %}
+                            <div >
+                                <button class="btn btn-success" style="margin-top: 20px;margin-left: 1px">过滤</button>
+                            </div>
+                        {% endif %}
+                    </form>
+
+                </div>
+                <div class="row-fluid">
+                    <form method="post" >{% csrf_token %}
+                        <div style="overflow: scroll">
+                            <table class="table table-bordered " >
+                                <thead >
+                                    <tr>
+                                        {% if not  admin_class.list_display %}
+                                            <th>{{ model_name }}</th>
+                                        {% else %}
+                                            {% for column in admin_class.sort_filter %}
+                                                {% if column == 'ID'  %}
+                                                    {{ pass }}
+                                                {% else %}
+                                                   {% if column == 'number' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">工单编号</a>
+                                                       </th>
+                                                   {% elif column == 'titel' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">问题标题</a>
+                                                       </th>
+                                                   {% elif column == 'start_time' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">提交时间</a>
+                                                       </th>
+                                                   {% elif column == 'pool' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">资源池</a>
+                                                       </th>
+                                                   {% elif column == 'status' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">状态</a>
+                                                       </th>
+                                                   {% elif column == 'transfer' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">工单移交</a>
+                                                       </th>
+                                                   {% elif column == 'ops_people' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">运维处理人</a>
+                                                       </th>
+                                                   {% elif column == 'timeout' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">超时</a>
+                                                       </th>
+                                                   {% else %}
+                                                       <th class="text-center" style="width: 50px;">
+                                                           <input onclick="checkAll(this)" type="checkbox">
+                                                       </th>
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">{{ column }}</a>
+                                                        </th>
+                                                   {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <th class='text-center' style="width: 300px">操作</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody" class="tab-content responsive" >
+                                    {% for row in querysets %}
+                                    <div class="col-lg-12">
+                                        <div method="post" id="worksheet">
+                                            {% if model_name == 'job' %}
+                                                <tr class='gradeX '  >
+                                                <td style="text-align: center">
+                                                    <a href="/apps/{{ model_name }}/detail/{{ row.number }}">{{ row.number }}</a>
+                                                </td>
+                                                <td style="text-align: center">
+                                                   {{ row.titel }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    {{ row.start_time|date:"Y-m-d H:i:s" }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    {{ row.pool }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    {{ row.get_status_display }}
+                                                <td style="text-align: center">
+                                                    {{ row.transfer }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    {{ row.ops_people }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    {{ row.timeout }}
+                                                </td>
+
+                                                <form method='POST'>
+                                                    {% csrf_token %}
+                                                    <td class="text-center" style="text-align: center">
+                                                        <a href="/apps/{{ model_name }}/change/?idAll={{ row.id }}" class="btn btn-mini btn-info ">更新</a>
+                                                    </td>
+                                                </form>
+                                            </tr>
+                                            {% elif model_name == 'pool' %}
+                                                 <tr class='gradeX '  >
+                                                    <td class='text-center' style="text-align: center">
+                                                    <input type='checkbox'  class='row-obj' name ='_selected_obj'  value='{{ row.id }}'></td>
+                                                    <td style="text-align: center">
+                                                        <a href="/apps/{{ model_name }}/detail/{{ row.number }}">{{ row.name }}</a>
+                                                    </td>
+
+                                                    <form method='POST'>
+                                                        {% csrf_token %}
+                                                        <td class="text-center" style="text-align: center">
+                                                            <a href="/apps/{{ model_name }}/change/?idAll={{ row.id }}" class="btn btn-mini btn-info ">更新</a>
+                                                            <a href="/apps/{{ model_name }}/delete/?idAll={{ row.id }}" class="btn btn-mini btn-danger ">删除</a>
+                                                        </td>
+                                                    </form>
+                                                </tr>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if model_name == 'pool' %}
+                        <div class="content">
+                            <tr>
+                                <td><input onclick="all_del_file(this) "  type='button' class='btn btn-danger btn-mini' value='删除' /></td>
+                            </tr>
+                        </div>
+                        {% endif %}
+                    </form>
+                    <div class="pagination">
+                        <ul class="pagination">
+                            <li class=""><a href="?_page=1{{ filter_condtions_string }}">首页 </a></li>
+                            {% for p in paginator.page_range %}
+                                {% get_abs_value p  querysets.number as i %}
+                                {% if i < 3 %}
+                                    {% if p == querysets.number %}
+                                        <li class="active"><a href="?_page={{ p }}{{ filter_condtions_string }}&_o={{ last_orderby_key }}">{{ p }} </a></li>
+                                    {% else %}
+                                        <li class=""><a href="?_page={{ p }}{{ filter_condtions_string }}&_o={{ last_orderby_key }}">{{ p }}</a></li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            <li class="">
+                                <a  href="?_page={{ paginator.num_pages }}{{ filter_condtions_string }}&_o={{ last_orderby_key }}">尾页</a>
+                            </li>
+                            <li class="">
+                                <a>总计 {{ querysets.paginator.num_pages }}页</a>
+                            </li>
+                            <li class="">
+                                <a>共计 {{ querysets.paginator.count }}项</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<script>
+
+
+$("#screen_timeout").on('click',function () {
+    if (this.checked) {
+        this.value = 1;
+    } else {
+        this.value = 0;
+    }
+})
+
+$("#screendate").change(function () {
+    nowdate = this.value;
+    if(nowdate != ''){
+        newUrl = "/apps/job/screen/?screenDate="+nowdate;
+{#        history.pushState('', '', newUrl);#}
+        $.ajax({
+            url: newUrl,
+            type: 'get',
+            success:function (data) {
+                join_data(data)
+            }
+        })
+    }
+})
+
+function join_data(data) {
+    var new_data = JSON.parse(data);
+    var sheet = document.getElementById('worksheet');
+    ele = "";
+    for(var i = 0;i<new_data.data.length;i++){
+        ele_tr = "<tr class='gradeX '  >"
+        ele_td = "<td style='text-align: center'>"
+        ele_a = "<a href='/apps/{{ model_name }}/detail/"+new_data.data[i].number+"'>"+new_data.data[i].number+"</a>";
+        ele_td += ele_a;
+        ele_td += "</td>";
+        ele_td += "<td style='text-align: center'>"+new_data.data[i].titel+"</td>";
+        ele_td += "<td style='text-align: center'>"+new_data.data[i].start_time+"</td>";
+        ele_td += "<td style='text-align: center'>"+new_data.data[i].pool__name+"</td>";
+        if(new_data.data[i].status == 0){
+            ele_td += "<td style='text-align: center'>未进行</td>";
+        }else if(new_data.data[i].status == 1){
+            ele_td += "<td style='text-align: center'>进行中</td>";
+        }else if(new_data.data[i].status == 2){
+            ele_td += "<td style='text-align: center'>已完成</td>";
+        }
+        if (new_data.data[i].transfer == null){
+            ele_td += "<td style='text-align: center'>None</td>";
+        }else {
+            ele_td += "<td style='text-align: center'>"+new_data.data[i].transfer+"</td>";
+        }
+        ele_td += "<td style='text-align: center'>"+new_data.data[i].ops_people__username+"</td>";
+        ele_td += "<td style='text-align: center'>"+new_data.data[i].timeout+"</td>";
+        ele_form = "<form method='POST'>";
+        ele_td1 = "<td class='text-center' style='text-align: center'>"
+        ele_a1 = "<a class='btn btn-mini btn-info ' href='/apps/{{ model_name }}/change/?idAll=" + new_data.data[i].id + "'>更新</a>"
+        ele_td1 += ele_a1;
+        ele_td1 += "</td>";
+        ele_form += ele_td1;
+        ele_form += "</form>";
+        ele_tr += ele_td;
+        ele_tr += ele_form;
+        ele_tr += "</tr>";
+        ele += ele_tr;
+    }
+    $("#tbody").html(ele)
+
+
+}
+
+function all_del_file(self) {
+    var check = document.getElementsByName("_selected_obj");
+    console.log('check',check);
+    var len = check.length;
+    var idAll = "";
+    for (var i = 0; i<len;i++){
+        if(check[i].checked){
+            idAll += check[i].value+',';
+        }
+    }
+    if(idAll == ''){
+        var td_id = $(this).closest('tr').find('th').eq(1).text();
+        idAll = td_id + ',' ;
+    }
+    $.ajax({
+        url:"/apps/{{ model_name }}/delete/?idAll=" + idAll,
+        type: 'post',
+        success:function (data) {
+            alert('删除成功',data);
+            location.reload(true)
+        }
+    })
+}
+
+function checkAll(self) {
+    if ( $(self).prop('checked')){
+
+        $("table .row-obj").prop('checked',true)
+    }else {
+         $("table .row-obj").prop('checked',false)
+    }
+}
+
+</script>
+{% endblock %}
