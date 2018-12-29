@@ -12,11 +12,18 @@ class Pool(models.Model):
     def __str__(self):
         return  "%s" %self.name
 
+class Department(models.Model):
+    name = models.CharField(verbose_name='名称',max_length=64,unique=True)
+
+    class Meta:
+        verbose_name = '部门'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
 class Job(models.Model):
-    choice_types = (
-        (0,'门户'),
-        (1,'CS'),
-    )
+
     choice_resolvent = (
         (0,'临时解决'),
         (1,'最终解决'),
@@ -30,10 +37,10 @@ class Job(models.Model):
     number = models.CharField(verbose_name='工单编号',max_length=128,unique=True)
     titel = models.CharField(verbose_name='工单标题',max_length=64)
     pool = models.ForeignKey(Pool,verbose_name='资源池',on_delete=models.CASCADE,related_name='job')
-    problem_type = models.SmallIntegerField(verbose_name='问题分类',choices=choice_types,default=0)
-    problem = models.CharField(verbose_name='分析原因',max_length=64,blank=True,null=True)
+    problem_type = models.ForeignKey(Department,verbose_name='问题分类',related_name='job',on_delete=models.CASCADE)
     ops_people = models.ForeignKey(User,verbose_name='运维处理人',related_name='job')
     dev_people = models.CharField(verbose_name='研发处理人',max_length=32,blank=True,null=True)
+    problem = models.CharField(verbose_name='分析原因', max_length=64, blank=True, null=True)
     resolvents = models.SmallIntegerField(verbose_name='解决方案',choices=choice_resolvent,default=0)
     resolvent = models.CharField(verbose_name='解决方法',max_length=128,blank=True,null=True)
     status = models.SmallIntegerField(verbose_name='状态',choices=cs_status,default=1)

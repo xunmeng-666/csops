@@ -4,8 +4,11 @@ import datetime
 
 def datefunc(date):
     now_date = datetime.datetime.now()
-    if date == 'three':
+    if date == 'one':
+        end_date = now_date + datetime.timedelta(days=-1)
+    elif date == 'three':
         end_date = now_date + datetime.timedelta(days=-3)
+
     elif date == 'seven':
         end_date = now_date + datetime.timedelta(days=-7)
     elif date == 'fifteen':

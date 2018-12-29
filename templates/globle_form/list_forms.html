@@ -18,7 +18,7 @@
             </div>
             <div class="row-fluid">
                 <div class="span9">
-                    <div class="col-sm-1">
+                    <div >
                         <a href="/apps/{{ model_name }}/add/" class="btn btn-success btn-sm">添加{% build_project_verbose_name admin_class %}</a>
                     </div>
                 </div>
@@ -26,25 +26,21 @@
 
             <div class="container-fluid">
                 <div class="row-fluid">
-                    <form >
-                        <div id="search" style="top: 107px;">
-                            <input type="search" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
-                            <button type="submit" class="tip-bottom" data-original-title="Search"><i class="icon-search icon-white"></i></button>
-                        </div>
-                        {% if model_name == 'job' %}
-                            <div class="span5" style="margin-left: 0px" >
+                    {% if model_name == 'job' %}
+                        <form >
+                            <div class="span6" style="margin-left: 0px" >
                             {% for filter_column in admin_class.list_search_filter %}
                                 {% if filter_column == 'timeout' %}
-                                <div class="span2" style="width: 6.529915%">
-                                    <div class="col-lg-2 text-center">
+                                <div class="span1" >
+                                    <div class="text-center">
                                         <a >超时</a>
                                         {% build_filter_ele filter_column admin_class filter_conditions %}
                                     </div>
                                 </div>
                                 {% else %}
-                                <div class="span3" style="width: 15.529915%">
-                                    <div class="col-lg-2 text-center">
-                                        <a >{% if filter_column == 'status' %}状态
+                                <div class="span2">
+                                    <div class="text-center">
+                                        <a class="text-center" style="width:100%">{% if filter_column == 'status' %}状态
                                         {% elif filter_column == 'resolvents' %}解决方案
                                         {% elif filter_column == 'problem_type' %}问题分类
                                         {% endif %}</a>
@@ -53,11 +49,12 @@
                                 </div>
                                 {% endif %}
                             {% endfor %}
-                            <div class="span3" style="width: 14.529915%">
-                                <div class="col-lg-3 text-center">
+                            <div class="span2" >
+                                <div class="text-center" style="width: 100%;">
                                 <a>日期筛选</a>
                                 <select class="form-control" style="width: 85px" id="screendate">
                                     <option value="">--------</option>
+                                    <option value="one">今天</option>
                                     <option value="three">3天</option>
                                     <option value="seven">7天</option>
                                     <option value="fifteen">15天</option>
@@ -67,15 +64,29 @@
                                 </select>
                             </div>
                             </div>
-                        </div>
-                        {% endif %}
-
-                        {% if admin_class.list_filter %}
-                            <div >
-                                <button class="btn btn-success" style="margin-top: 20px;margin-left: 1px">过滤</button>
+                                {% if admin_class.list_filter %}
+                                    <div class="span2">
+                                        <button class="btn btn-success" style="margin-top: 20px;margin-left: 1px">过滤</button>
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
+                        </form>
+                        <form class="navbar-form navbar-left" style="margin-left: 30%">
+                            <div class="form-group" >
+                                <input type="text" class="form-control" style="width: 100%;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                            </div>
+                            <button type="submit" class="btn btn-success btn-sm ">搜索</button>
+                        </form>
+                    {% else%}
+                        <form class="navbar-form navbar-left" style="margin-left: 80%">
+                        <div class="form-group" >
+                            <input type="text" class="form-control" style="width: 100%;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm ">搜索</button>
                     </form>
+                    {% endif %}
+
+
 
                 </div>
                 <div class="row-fluid">
@@ -123,13 +134,20 @@
                                                        <th class="text-center" style="width: 400px;">
                                                            <a href="?_o={{column }}{{ filter_condtions_string }}">超时</a>
                                                        </th>
+
                                                    {% else %}
                                                        <th class="text-center" style="width: 50px;">
                                                            <input onclick="checkAll(this)" type="checkbox">
                                                        </th>
+                                                       {% if column == 'name' %}
+                                                       <th class="text-center" style="width: 400px;">
+                                                           <a href="?_o={{column }}{{ filter_condtions_string }}">名称</a>
+                                                       </th>
+                                                       {% else %}
                                                        <th class="text-center" style="width: 400px;">
                                                            <a href="?_o={{column }}{{ filter_condtions_string }}">{{ column }}</a>
                                                         </th>
+                                                       {% endif %}
                                                    {% endif %}
                                                 {% endif %}
                                             {% endfor %}
@@ -163,10 +181,7 @@
                                                 <td style="text-align: center">
                                                     {{ row.ops_people }}
                                                 </td>
-                                                <td style="text-align: center">
-                                                    {{ row.timeout }}
-                                                </td>
-
+                                                <td style="text-align: center">{{ row.timeout }}</td>
                                                 <form method='POST'>
                                                     {% csrf_token %}
                                                     <td class="text-center" style="text-align: center">
@@ -174,7 +189,7 @@
                                                     </td>
                                                 </form>
                                             </tr>
-                                            {% elif model_name == 'pool' %}
+                                            {% else %}
                                                  <tr class='gradeX '  >
                                                     <td class='text-center' style="text-align: center">
                                                     <input type='checkbox'  class='row-obj' name ='_selected_obj'  value='{{ row.id }}'></td>
@@ -185,8 +200,8 @@
                                                     <form method='POST'>
                                                         {% csrf_token %}
                                                         <td class="text-center" style="text-align: center">
-                                                            <a href="/apps/{{ model_name }}/change/?idAll={{ row.id }}" class="btn btn-mini btn-info ">更新</a>
-                                                            <a href="/apps/{{ model_name }}/delete/?idAll={{ row.id }}" class="btn btn-mini btn-danger ">删除</a>
+                                                            <a href="/apps/{{ model_name }}/change/?idAll={{ row.id }}" class="btn btn-sm btn-info ">更新</a>
+                                                            <a href="/apps/{{ model_name }}/delete/?idAll={{ row.id }}" class="btn btn-sm btn-danger ">删除</a>
                                                         </td>
                                                     </form>
                                                 </tr>

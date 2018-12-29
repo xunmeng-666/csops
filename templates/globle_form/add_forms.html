@@ -22,14 +22,11 @@
         <div class="span12">
             <div class="widget-box">
                 <div class="widget-title span10" style="border: 0px solid">
-                    <ul class="nav nav-tabs col-sm-5" >
-                        <li role="navigation" class="active"><a href="#alert-tab" data-toggle="tab">逐条添加</a></li>
-                        <li role="navigation"><a href="#note-tab" data-toggle="tab">批量添加</a></li>
-                    </ul>
+
                 </div>
             </div>
         </div>
-        <div class="span12" style="width: 90%">
+        <div class="span12" style="width: 75%;margin-left:11.564103%">
             <div class="widget-box">
                 <div id="generalTabContent" class="tab-content responsive">
                     <div id="alert-tab" class="tab-pane fade in active">
@@ -39,19 +36,23 @@
                                      <form class="form-horizontal" method="post">{% csrf_token %}
                                     {% for field in form_obj %}
 
-                                        <div class="form-group " id="div_{{ field.name }}">
-                                            <label class=" span1" id="{{ field.name }}" style="width: 9%;font-size: 12px">{{ field.label }}：</label>
-                                            {% if field.name == 'problem' %}
-                                                <textarea name="problem" maxlength="64" class="form-control" id="id_problem"></textarea>
+                                        <div class="form-group " id="div_{{ field.name }}" >
+
+                                            <label id="{{ field.name }}" style="font-size: 12px">{{ field.label }}：</label>
+                                            {% if field.name == 'number' %}
+                                                <input type="text" name="number" class="form-control"  oninput="value=value.replace(/[^\w]/g,'')">
+                                            {% elif field.name == 'problem' %}
+                                                <textarea name="problem" maxlength="64" class="form-control" style="height: 200px" id="id_problem"></textarea>
                                             {% elif field.name == 'resolvent' %}
-                                                <textarea name="resolvent" maxlength="128" class="form-control" id="id_resolvent"></textarea>
+                                                <textarea name="resolvent" maxlength="128" class="form-control" style="height: 200px" id="id_resolvent"></textarea>
                                             {% elif field.name == 'nextresolvent' %}
-                                                <textarea name="nextresolvent" maxlength="128" class="form-control" id="id_nextresolvent"></textarea>
+                                                <textarea name="nextresolvent" maxlength="128" class="form-control" style="height: 200px" id="id_nextresolvent"></textarea>
                                             {% elif field.name == 'testing_job' %}
-                                                <textarea name="testing_job" maxlength="128" class="form-control" id="id_testing_job"></textarea>
+                                                <textarea name="testing_job" maxlength="128" class="form-control" style="height: 200px" id="id_testing_job"></textarea>
                                             {% elif field.name == 'testing_job' %}
-                                                <textarea name="testing_job" maxlength="128" class="form-control" id="id_testing_job"></textarea>
+                                                <textarea name="testing_job" maxlength="128" class="form-control" style="height: 200px" id="id_testing_job"></textarea>
                                             {% else %}
+{#                                                <input type="text" name="{{ field.name }}" style="padding: 4px 80px">#}
                                             {{ field }}
                                             {% endif %}
                                             <span style="color: red" id="{{ field.name }}_errors">{{ field.errors.0 }}  </span>
@@ -68,15 +69,6 @@
                             </div>
                         </form>
                     </div>
-
-                    <div id="note-tab" class="tab-pane fade" >
-                        <p>请下载Excel文件, 按照格式填写主机信息, 上传导入. <a href="/asset/{{ app_name }}/{{ model_name }}/download/" style="color: #1a1ad2">点击下载模板</a></p>
-                        <p></p>
-                        <form id="upfile" action="/asset/{{ app_name }}/{{ model_name }}/upload/" method="post" enctype="multipart/form-data" target="file">
-                            <input  type="file" name="upfile" />
-                            <input type="submit" value="导入配置" class="btn-success btn btn-sm" >
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>
@@ -88,7 +80,6 @@
 <script src="/static/js/laydate.js"></script>
 <script>
 $(function () {
-    setTimedir();
     timeOut();
     setTime();
 })
@@ -105,12 +96,7 @@ function display_div(status) {
     }
 }
 
-function setTimedir() {
-
-}
-
 function timeOut() {
-    var timeout = document.getElementById('id_timeout');
     if ($("#id_timeout").is(':checked')){
 
         display_div('block')

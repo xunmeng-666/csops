@@ -130,7 +130,14 @@ def build_job_detail(admin_class,row):
             if choice[0] == row.value():
                 ele_td+= "<td>" + choice[1] +"</td>"
     else:
-        ele_td += "<td>"+str(row.value())+"</td>"
+        if row.value() is None:
+            ele_td += "<td></td>"
+        elif row.value() is False:
+            ele_td += "<td>否</td>"
+        elif row.value() is True:
+            ele_td += "<td style='color: red'>是</td>"
+        else:
+            ele_td += "<td>"+str(row.value())+"</td>"
         ele_tr += ele_td +"</tr>"
     ele += ele_tr
     return mark_safe(ele)

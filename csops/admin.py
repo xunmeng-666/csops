@@ -5,7 +5,7 @@ from csops.admin_base import site,BaseAdmin
 
 
 class JobAdmin(BaseAdmin):
-    list_display = ("number","title","pool__name","problem_type","problem","status","ops_people","dev_people","resolvents","resolvent","transfer"
+    list_display = ("number","title","pool__name","problem_type","status","ops_people","dev_people","problem","resolvents","resolvent","transfer"
                     "timeout","timeout_cause","resolventplan","nextresolvent","testing_job","dev_job","estimate_time",
                     "refailure","start_time","resolve_time")
 
@@ -22,5 +22,13 @@ class PoolAdmin(BaseAdmin):
     search_fields = ["name" ]
     sort_filter = ["name" ]
 
+class DepartmentAdmin(BaseAdmin):
+    list_display = ("name")
+    list_filter = ['资源池']
+    list_per_page = 3
+    search_fields = ["name"]
+    sort_filter = ["name"]
+
 site.register(models.Job,JobAdmin)
 site.register(models.Pool,PoolAdmin)
+site.register(models.Department,DepartmentAdmin)
