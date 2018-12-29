@@ -7,8 +7,8 @@
 <div id="content-header">
     <ol class="breadcrumb" style="background-color: #ffffff">
         <a href="/" class="tip-bottom" data-original-title="Go to Home"><i class="icon-home"></i>Home </a>>
-        <a href="/asset/{{ app_name }}/{{ model_name }}/" class="tip-bottom" data-original-title="">{% build_project_name admin_class %}</a>>
-        <a href="/asset/{{ app_name }}/{{ model_name }}/ADD{% build_project_name admin_class %}" title="添加{% build_project_name admin_class %}" class="tip-bottom" data-original-title="">添加{% build_project_name admin_class %}</a>
+        <a href="/apps/{{ model_name }}/list/" class="tip-bottom" data-original-title="">{% build_project_verbose_name admin_class %}</a>>
+        <a href="/apps/{{ model_name }}/add/" title="添加{% build_project_verbose_name admin_class %}" class="tip-bottom" data-original-title="">添加{% build_project_verbose_name admin_class %}</a>
     </ol>
     <div class="col-lg-12 class-title">
         <div class="ibox float-e-margins" id="all">
@@ -114,6 +114,11 @@ $("#id_timeout").change(function () {
 })
 
 function setTime() {
+    laydate.render({
+    elem: '#id_start_time',
+    type: 'datetime'
+    });
+
     laydate.render({
     elem: '#id_estimate_time',
     type: 'datetime'

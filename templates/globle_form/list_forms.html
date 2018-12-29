@@ -40,7 +40,7 @@
                                 {% else %}
                                 <div class="span2">
                                     <div class="text-center">
-                                        <a class="text-center" style="width:100%">{% if filter_column == 'status' %}状态
+                                        <a >{% if filter_column == 'status' %}状态
                                         {% elif filter_column == 'resolvents' %}解决方案
                                         {% elif filter_column == 'problem_type' %}问题分类
                                         {% endif %}</a>
@@ -52,7 +52,7 @@
                             <div class="span2" >
                                 <div class="text-center" style="width: 100%;">
                                 <a>日期筛选</a>
-                                <select class="form-control" style="width: 85px" id="screendate">
+                                <select class="form-control" id="screendate">
                                     <option value="">--------</option>
                                     <option value="one">今天</option>
                                     <option value="three">3天</option>
@@ -71,18 +71,19 @@
                                 {% endif %}
                             </div>
                         </form>
-                        <form class="navbar-form navbar-left" style="margin-left: 30%">
+                        <form class="navbar-form navbar-left" >
                             <div class="form-group" >
-                                <input type="text" class="form-control" style="width: 100%;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                                <input type="text" class="form-control" style="width: 70%;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                                <button type="submit" class="btn btn-success btn-sm ">搜索</button>
                             </div>
-                            <button type="submit" class="btn btn-success btn-sm ">搜索</button>
+
                         </form>
                     {% else%}
-                        <form class="navbar-form navbar-left" style="margin-left: 80%">
+                        <form class="navbar-form navbar-left" style="margin-left: 75%">
                         <div class="form-group" >
-                            <input type="text" class="form-control" style="width: 100%;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                            <input type="text" class="form-control" style="width: 70%;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                            <button type="submit" class="btn btn-success btn-sm ">搜索</button>
                         </div>
-                        <button type="submit" class="btn btn-success btn-sm ">搜索</button>
                     </form>
                     {% endif %}
 

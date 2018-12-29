@@ -36,6 +36,7 @@ class Job(models.Model):
 
     number = models.CharField(verbose_name='工单编号',max_length=128,unique=True)
     titel = models.CharField(verbose_name='工单标题',max_length=64)
+    start_time = models.DateTimeField(verbose_name='提交时间', auto_now_add=False)
     pool = models.ForeignKey(Pool,verbose_name='资源池',on_delete=models.CASCADE,related_name='job')
     problem_type = models.ForeignKey(Department,verbose_name='问题分类',related_name='job',on_delete=models.CASCADE)
     ops_people = models.ForeignKey(User,verbose_name='运维处理人',related_name='job')
@@ -53,7 +54,6 @@ class Job(models.Model):
     dev_job = models.CharField(verbose_name='开发对接任务', max_length=128, blank=True, null=True)
     estimate_time = models.DateTimeField(verbose_name='预计解决时间', auto_now_add=False, blank=True, null=True)
     refailure = models.BooleanField(verbose_name='复发故障')
-    start_time = models.DateTimeField(verbose_name='提交时间',auto_now_add=True)
     resolve_time = models.DateTimeField(verbose_name='最终解决时间', auto_now_add=False, blank=True, null=True)
 
     class Meta:

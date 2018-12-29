@@ -47,7 +47,7 @@ def build_filter_ele(filter_column,admin_class,filter_conditions):
     """
 
     field_obj = admin_class.model._meta.get_field(filter_column)
-    select_ele = "<select class='form-control' style='width: 85px' name=%s>"% filter_column
+    select_ele = "<select class='form-control'  name=%s>"% filter_column
     filter_option = filter_conditions.get(filter_column) #1.None 代表没有对这个字段过滤，2.有值，选中的具体的option的val
     if filter_option:#代表此字段过滤了
         try:

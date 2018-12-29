@@ -79,9 +79,14 @@ $(function () {
 
 function setTime() {
     laydate.render({
+    elem: '#id_start_time',
+    type: 'datetime'
+    });
+
+    laydate.render({
     elem: '#id_estimate_time',
     type: 'datetime'
-    })
+    });
 
     laydate.render({
         elem: '#id_resolve_time',
