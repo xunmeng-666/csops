@@ -4,10 +4,15 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.http import FileResponse
+from django.utils.http import urlquote
 from . import forms
 from .admin_base import site
-from .etc.models import screens
+from .etc.models import screens,exportfile,download
+from .etc import models
+from config import config
 import json
+import os
 # Create your views here.
 
 @login_required
@@ -29,6 +34,36 @@ def account_logout(request,**kwargs):
     logout(request)
     return redirect('/accounts/login/')
 
+@csrf_exempt
+@login_required
+def change_password_obj(request):
+    if request.method == 'GET':
+        return redirect("/")
+    elif request.method == "POST":
+        user = request.user
+        pwd = request.POST.get('pwd')
+        new_pwd = request.POST.get("new_pwd")
+        re_pwd = request.POST.get("re_pwd")
+
+        obj = authenticate(username=user,password=pwd)
+        # obj = models.UserInfo.objects.filter(username=user, password=pwd).first()
+        ret = {'status': True, 'error': None}
+
+        if obj:
+            if new_pwd == re_pwd:
+                obj.set_password(new_pwd)
+                obj.save()
+                return HttpResponse(json.dumps(ret))
+            else:
+                ret['status'] = False
+                ret['error'] = "新密码不一致"
+                return HttpResponse(json.dumps(ret))
+        else:
+            ret['status'] = False
+            ret['error'] = "原密码错误"
+            # 登陆失败，页面显示错误信息
+            return HttpResponse(json.dumps(ret))
+    return redirect('/')
 
 def admin_func(model_name):
     for app_name in site.registered_admins:
@@ -107,6 +142,7 @@ def list(request,model_name):
     querysets, q_val = get_search_objs(request, querysets, admin_class)
     querysets, new_order_key, order_column, last_orderby_key = get_orderby_objs(request, querysets)
     paginator = Paginator(querysets, admin_class.list_per_page)  # Show 25 contacts per page
+    print(dir(querysets))
     page = request.GET.get('_page')
     try:
         querysets = paginator.page(page)
@@ -116,18 +152,34 @@ def list(request,model_name):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         querysets = paginator.page(paginator.num_pages)
+
     return render(request,'globle_form/list_forms.html',locals())
 
+
+@csrf_exempt
 @login_required
 def add(request,model_name):
+    print('requ',request)
     admin_class = admin_func(model_name)
     form = forms.create_dynamic_modelform(admin_class.model)
-    if request.method == 'POST':
-        form_obj = form(data=request.POST)
-        if form_obj.is_valid():
-            form_obj.save()
-            return redirect("apps/%s/list" %model_name)
 
+    if request.method == 'POST':
+        try:
+            imageID = request.GET.get('id').split(',')
+            print('imageid',imageID)
+            image_class = admin_func('image')
+            form_obj = form(data=request.POST)
+            if form_obj.is_valid():
+                form_obj.save()
+                form_id = admin_class.model.objects.values('id').order_by('-id')[0]['id']
+                for imgid in imageID:
+                    image_class.model.objects.filter(id=imgid).update(job_id=form_id)
+        except TypeError:
+            form_obj = form(data=request.POST)
+            if form_obj.is_valid():
+                form_obj.save()
+                form_id = admin_class.model.objects.values('id').order_by('-id')[0]['id']
+        return redirect("/apps/%s/list" %model_name)
     else:
         form_obj = form()
     return render(request,'globle_form/add_forms.html',locals())
@@ -153,6 +205,7 @@ def detail(request,model_name,number):
     objects = admin_class.model.objects.get(number=number)
     form = forms.create_dynamic_modelform(admin_class.model)
     form_obj = form(instance=objects)
+    imagelist =admin_class.model.objects.filter(number=number).values("image__imagepath")
     return render(request,'globle_form/detail_forms.html',locals())
 
 @login_required
@@ -177,4 +230,47 @@ def screen(request,model_name):
     date = request.GET.get('screenDate')
     datefunc = screens(admin_class,date)
     return HttpResponse(json.dumps({'data':datefunc}))
+
+@login_required
+def export(request,model_name):
+    admin_class = admin_func(model_name)
+    startdate = request.GET.get('startdate')
+    enddate = request.GET.get('enddate')
+    if not startdate or not enddate :
+        downfile = download(admin_class)
+    else:
+        downfile = exportfile(admin_class,startdate,enddate)
+    response = FileResponse(open(downfile, 'rb'))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="{0}"'.format(urlquote(os.path.basename(downfile)))
+    return response
+
+
+@login_required
+@csrf_exempt
+def upload(request,model_name):
+    if request.method == 'POST':
+        print(request.FILES)
+        file = request.FILES.values()
+        image_id = []
+        status = {}
+        try:
+            for file in file:
+                filename = os.path.join(config.upload_img, "%s_%s" % (models.now_date(), file.name))
+                filepath = os.path.join('/static/files/upload/img/',"%s_%s" % (models.now_date(), file.name))
+                f = open(filename, 'wb')
+                for chunk in file.chunks():
+                    f.write(chunk)
+                f.close()
+                admin_class = admin_func(model_name)
+                obj = admin_class.model.objects.all()
+                obj.create(imagepath=filepath).save()
+                image_id.append(obj.filter(imagepath=filepath).values('id')[0]['id'])
+                status['status'] = 'success'
+                status['id'] = image_id
+            return HttpResponse(json.dumps(status))
+        except FileNotFoundError:
+            status['status'] = 'error'
+            status['info'] = '上传文件路径错误'
+            return HttpResponse(json.dumps(status))
 

@@ -23,5 +23,7 @@ urlpatterns = [
     url(r'^(\w+)/delete/', views.delete,name='csops-delete'),
     url(r'^(\w+)/detail/(\w+)/', views.detail),
     url(r'^(\w+)/screen/', views.screen),
+    url(r'^(\w+)/export/', views.export),
+    url(r'^(\w+)/upimg/', views.upload),
 
 ]

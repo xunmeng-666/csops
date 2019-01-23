@@ -89,12 +89,7 @@ $(document).ready(function(){
 	$('.tip-right').tooltip({ placement: 'right' });	
 	$('.tip-top').tooltip({ placement: 'top' });	
 	$('.tip-bottom').tooltip({ placement: 'bottom' });	
-	
-	// === Search input typeahead === //
-	$('#search input[type=text]').typeahead({
-		source: ['Dashboard','Form elements','Common Elements','Validation','Wizard','Buttons','Icons','Interface elements','Support','Calendar','Gallery','Reports','Charts','Graphs','Widgets'],
-		items: 4
-	});
+
 	
 	// === Fixes the position of buttons group in content header and top user navigation === //
 	function fix_position()

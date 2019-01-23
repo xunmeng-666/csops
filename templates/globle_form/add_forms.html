@@ -30,40 +30,52 @@
             <div class="widget-box">
                 <div id="generalTabContent" class="tab-content responsive">
                     <div id="alert-tab" class="tab-pane fade in active">
-                         <form method="post">{% csrf_token %}
+                         <form method="post" name="knowledgeAddForm" id="knowledgeAddForm" action >{% csrf_token %}
                             <div class="modal-body">
                                 <div class="modal-body" >
-                                     <form class="form-horizontal" method="post">{% csrf_token %}
-                                    {% for field in form_obj %}
 
-                                        <div class="form-group " id="div_{{ field.name }}" >
+{#                                     <form class="form-horizontal"  method="post">{% csrf_token %}#}
+                                        {% for field in form_obj %}
 
-                                            <label id="{{ field.name }}" style="font-size: 12px">{{ field.label }}：</label>
-                                            {% if field.name == 'number' %}
-                                                <input type="text" name="number" class="form-control"  oninput="value=value.replace(/[^\w]/g,'')">
-                                            {% elif field.name == 'problem' %}
-                                                <textarea name="problem" maxlength="64" class="form-control" style="height: 200px" id="id_problem"></textarea>
-                                            {% elif field.name == 'resolvent' %}
-                                                <textarea name="resolvent" maxlength="128" class="form-control" style="height: 200px" id="id_resolvent"></textarea>
-                                            {% elif field.name == 'nextresolvent' %}
-                                                <textarea name="nextresolvent" maxlength="128" class="form-control" style="height: 200px" id="id_nextresolvent"></textarea>
-                                            {% elif field.name == 'testing_job' %}
-                                                <textarea name="testing_job" maxlength="128" class="form-control" style="height: 200px" id="id_testing_job"></textarea>
-                                            {% elif field.name == 'testing_job' %}
-                                                <textarea name="testing_job" maxlength="128" class="form-control" style="height: 200px" id="id_testing_job"></textarea>
-                                            {% else %}
-{#                                                <input type="text" name="{{ field.name }}" style="padding: 4px 80px">#}
-                                            {{ field }}
-                                            {% endif %}
-                                            <span style="color: red" id="{{ field.name }}_errors">{{ field.errors.0 }}  </span>
-                                        </div>
-                                        <br>
-                                    {% endfor %}
+                                            <div class="form-group " id="div_{{ field.name }}" >
+
+                                                <label id="{{ field.name }}" style="font-size: 12px">{{ field.label }}：</label>
+                                                {% if field.name == 'number' %}
+                                                    <input type="text" name="number" class="form-control"  oninput="value=value.replace(/[^\w]/g,'')">
+                                                {% elif field.name == 'problem' %}
+                                                    <textarea name="problem" maxlength="2000" class="form-control" style="height: 200px" id="id_problem"></textarea>
+                                                {% elif field.name == 'resolvent' %}
+                                                    <textarea name="resolvent" maxlength="2000" class="form-control" style="height: 200px" id="id_resolvent"></textarea>
+                                                {% elif field.name == 'nextresolvent' %}
+                                                    <textarea name="nextresolvent"  maxlength="2000" class="form-control" style="height: 200px" id="id_nextresolvent"></textarea>
+                                                {% elif field.name == 'testing_job' %}
+                                                    <textarea name="testing_job" maxlength="2000" class="form-control" style="height: 200px" id="id_testing_job"></textarea>
+                                                {% elif field.name == 'testing_job' %}
+                                                    <textarea name="testing_job" maxlength="2000"  class="form-control" style="height: 200px" id="id_testing_job"></textarea>
+                                                {% else %}
+                                                    {{ field }}
+                                                {% endif %}
+                                                <span style="color: red" id="{{ field.name }}_errors">{{ field.errors.0 }}  </span>
+                                                <br>
+                                            </div>
+
+                                        {% endfor %}
+{#                                     </form>#}
+                                    <form id="ff1" action="/apps/image/upimg/" method="post" enctype="multipart/form-data" target="ifr">
+                                         <div class="form-group" id="div_image">
+                                             <label id="image_0" style="font-size: 12px">添加图片：</label><a style="color: red">*只支持jpg、png格式</a>
+                                             <input type="file" id="upFile1" name="upFile1" >
+                                             <input type="file" id="upFile2" name="upFile2" >
+                                             <input type="file" id="upFile3" name="upFile3" >
+                                             <input type="file" id="upFile4" name="upFile4" >
+                                             <input type="file" id="upFile5" name="upFile5" >
+                                         </div>
                                      </form>
                                 </div>
                                  <div class="form-group">
                                     <div class="span8">
-                                        <input type="submit" class="btn btn-info" value="保存">
+                                        <input type="button" id="btn1" class="btn btn-info" value="保存">
+                                        <input type="submit" id="btn2" class="btn btn-info" style="display: none">
                                     </div>
                                 </div>
                             </div>
@@ -78,11 +90,15 @@
 
 
 <script src="/static/js/laydate.js"></script>
+<script language="JavaScript" src="/static/js/bootstrap.js"></script>
+<script language="JavaScript" src="/static/js/jquery.js"></script>
 <script>
 $(function () {
     timeOut();
     setTime();
+
 })
+
 function display_div(status) {
     if ($("#div_timeout_cause")){
         document.getElementById("div_timeout_cause").style.display=status;
@@ -129,6 +145,141 @@ function setTime() {
         type: 'datetime'
     })
 }
+
+$("#btn1").click(function () {
+    var fm = new FormData();
+    var file1 = document.getElementById('upFile1');
+    var file2 = document.getElementById('upFile2');
+    var file3 = document.getElementById('upFile3');
+    var file4 = document.getElementById('upFile4');
+    var file5 = document.getElementById('upFile5');
+    var titel = document.getElementById('id_titel');
+    var start_time = document.getElementById('id_start_time');
+    var pool = document.getElementById('id_pool');
+    var ops_people = document.getElementById('id_ops_people');
+
+    if(file1.files[0]  || file2.files[0]  || file3.files[0]  || file4.files[0] || file5.files[0] ){
+        if(titel.value == "" || start_time.value == "" || pool.value == "" || ops_people.value == ""){
+            alert('不能单独上传图片，情详细填写工单内容')
+        }else {
+
+            console.log('222')
+            fm.append('file1', file1.files[0]);
+            fm.append('file2', file2.files[0]);
+            fm.append('file3', file3.files[0]);
+            fm.append('file4', file4.files[0]);
+            fm.append('file5', file5.files[0]);
+            $.ajax({
+                url: "/apps/image/upimg/",
+                data: fm,
+                type: 'POST',
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (arg) {
+                    var _id = JSON.parse(arg)
+                    var newUrl = '/apps/job/add/?id=' + _id.id;
+                    var _form = $("#knowledgeAddForm");
+                    _form.attr('action', newUrl).attr('method', 'post').submit()
+                }
+            })
+        }
+    }
+
+    else{
+        console.log('1111')
+        $("#btn2").click();
+    }
+
+})
+
+function upFile(a) {
+
+    var flag = $(a);
+    if (!flag[0].files || !flag[0].files[0]) {
+        return;
+    }
+    var file = flag[0].files[0];
+    var name = flag[0].files[0].name;
+    var suffix =suffixName(name)[0].toLowerCase(); //后缀名
+    var size = flag[0].files[0].size;  //文件大小
+    var fr = new FileReader(); // 这个FileReader应该对应于每一个读取的文件都需要重新new一个
+    var files = flag[0].files[0]; // files可以获取当前文件输入框中选择的所有文件，返回列表
+    fr.readAsDataURL(files); // 读取的内容是加密以后的本地文件路径
+    fr.onload = function (e) { // 数据读取完成时触发onload对应的响应函数
+        console.log(123);
+        var timeStamp = Math.floor(Math.random() * 10000); //自定义一个随机数
+        $(flag).parent().addClass('li' + timeStamp).hide(); //每次隐藏之前添加一个Class
+        var html = '<a href="javascript:void(0)" class="select_the_file">选择文件\n' +
+            '                        <input type="file" class="iptFile" onchange="upFile(this)">\n' +
+            '                    </a>';
+        $('.no_file').before(html);//每次生成一个input file  插入到节点
+
+        var li;
+        if (suffix == '.jpg' || suffix == '.jpeg' || suffix == '.png' || suffix == '.bmp' ) { //图片格式
+            li =   '<li> <span><i class="fa fa-file-image-o" name='+name+'>&nbsp;</i>' + name + '</span> <span class="size">(' + parseInt(files.size / 1000) + 'kb)</span> <a class="remove" data-class="li' + timeStamp + '"  onclick="deleteLi(this)">删除</a> </li>';
+            upload(flag)
+        } else {
+            alert('文件格式错误，支持JPG、JPEG、PNG、BMP格式图片')
+        }
+
+        if ($('.upload-enclosure-ul li').length < 5) {  //判断不能超过10个  可自行写入多少
+            $('.upload-enclosure-ul').append(li);
+        } else {
+            pageCommon.layerMsg("最多能选择5个附件", 2, true)
+        }
+
+        if ($('.upload-enclosure-ul li').length != 0) {  // 显示隐藏 未选择文件字眼
+            $('.no_file').hide();
+        } else {
+            $('.no_file').show();
+        }
+    };
+
+
+}
+{#imgID=[];#}
+{##}
+{#function upload(flag) {#}
+{#   $('.iptFile').click(function () {#}
+{#        var fm = new FormData();#}
+{#        fm.append('files', flag[0].files[0]);#}
+{#        $.ajax({#}
+{#            url: "/apps/image/upimg/",#}
+{#            type: 'POST',#}
+{#            data: fm,#}
+{#            processData: false,  // tell jQuery not to process the data#}
+{#            contentType: false,  // tell jQuery not to set contentType#}
+{#            success:function (arg) {#}
+{#                console.log(arg);#}
+{#            }#}
+{#        })#}
+{#    })#}
+{##}
+{#}#}
+{##}
+{#function deleteLi(a) {#}
+{#    $(a).parent().remove();#}
+{#    var attr = $(a).attr('data-class');#}
+{#    var newAttr = '.' + attr;#}
+{#    $('.inspection_item_con_file  ' + newAttr + '').remove(); //删除对应 input file#}
+{##}
+{#    if ($('.upload-enclosure-ul li').length != 0) { // 显示隐藏 未选择文件字眼#}
+{#        $('.no_file').hide();#}
+{#    } else {#}
+{#        $('.no_file').show();#}
+{#    }#}
+{#}#}
+{##}
+{##}
+{#function suffixName(file_name){#}
+{#    var result = /\.[^\.]+/.exec(file_name);#}
+{#    return result;#}
+{#}#}
+
+
+
+
+
 
 
 

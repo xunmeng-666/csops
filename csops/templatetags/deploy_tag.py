@@ -59,8 +59,11 @@ def build_filter_ele(filter_column,admin_class,filter_conditions):
                 option_ele = "<option value=%s  %s>%s</option>" % (choice[0],selected,choice[1])
                 select_ele += option_ele
         except AttributeError:
-            select_ele = "<input type='checkbox' name='timeout' value='1'>"
-
+            if filter_column == 'timeout':
+                select_ele = "<input type='checkbox' name='timeout' value='1'>"
+            elif filter_column == 'vip':
+                select_ele = "<input type='checkbox' name='vip' value='1'>"
+            return mark_safe(select_ele)
 
     else:
         try:
@@ -68,9 +71,11 @@ def build_filter_ele(filter_column,admin_class,filter_conditions):
                 option_ele = "<option value=%s >%s</option>" % (choice[0],choice[1])
                 select_ele += option_ele
         except AttributeError:
-
-            select_ele = "<input type='checkbox' name='timeout' id='screen_timeout',value='0'>"
-
+            if filter_column == 'timeout':
+                select_ele = "<input type='checkbox' name='timeout' id='screen_timeout',value='0'>"
+            elif filter_column == 'vip':
+                select_ele = "<input type='checkbox' name='vip' id='screen_vip',value='0'>"
+            return mark_safe(select_ele)
 
     select_ele += "</select>"
     return mark_safe(select_ele)
@@ -141,3 +146,31 @@ def build_job_detail(admin_class,row):
         ele_tr += ele_td +"</tr>"
     ele += ele_tr
     return mark_safe(ele)
+
+@register.simple_tag
+def build_job_image(admin_class,number):
+    ele = ""
+    imagepath = admin_class.model.objects.get(number=number).image.values("imagepath")
+    for path in imagepath:
+        ele_li = "<li class='span2' style='width: 200px;'>"
+        ele_li += "<a><img  style='wigth: 100%;height: 100%' alt='' src="+path.get('imagepath')+"></a>"
+        ele_li += "<div class='actions'>"
+        ele_li += "<a class='lightbox_trigger' href=%s>" %path.get('imagepath')
+        ele_li += "<i class='icon-search'></i>"
+        ele_li += "</a>"
+        ele_li += "</div>"
+        ele_li += "</li>"
+        ele += ele_li
+    return mark_safe(ele)
+
+
+@register.simple_tag
+def build_start_date(admin_class):
+    datelist = []
+    for date in admin_class.model.objects.values("start_time"):
+        if date['start_time'].strftime('%Y-%m-%d') not in datelist:
+            datelist.append(date['start_time'].strftime('%Y-%m-%d'))
+    ele_option = ""
+    for date in datelist:
+        ele_option += "<option value='%s'>%s</option>"%(date,date)
+    return mark_safe(ele_option)

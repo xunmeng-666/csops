@@ -22,52 +22,23 @@
                         <a href="/apps/{{ model_name }}/add/" class="btn btn-success btn-sm">添加{% build_project_verbose_name admin_class %}</a>
                     </div>
                 </div>
-                <div class="span3">
-                    {% if model_name == 'job' %}
-                        <form class="navbar-form navbar-right" >
-                            <div class="form-group" >
-                                <input type="text" class="form-control" style="width: 190px;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
-                                <button type="submit" class="btn btn-success btn-sm ">搜索</button>
-                            </div>
-
-                        </form>
-                    {% else%}
-                        <form class="navbar-form navbar-right" >
-                        <div class="form-group" >
-                            <input type="text" class="form-control" style="width: 190px;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
-                            <button type="submit" class="btn btn-success btn-sm ">搜索</button>
-                        </div>
-                    </form>
-                    {% endif %}
-                </div>
             </div>
 
             <div class="container-fluid">
                 <div class="row-fluid">
-
-                    <form >
-                        <div class="row">
+                    {% if model_name == 'job' %}
+                        <form >
+                            <div class="span6" style="margin-left: 0px" >
                             {% for filter_column in admin_class.list_search_filter %}
                                 {% if filter_column == 'timeout' %}
-                                <div class="span1" style="width: 35px;margin-left: -10px" >
-                                    <div class="text-center">
+                                <div class="span1"  >
+                                    <div class="text-center" style="width: 30px">
                                         <a >超时</a>
-                                        <div>
-                                            {% build_filter_ele filter_column admin_class filter_conditions %}
-                                        </div>
-                                    </div>
-                                </div>
-                                {% elif filter_column == 'vip' %}
-                                <div class="span1" style="width: 35px;margin-left: -10px" >
-                                    <div class="text-center">
-                                        <a >VIP</a>
-                                        <div>
-                                            {% build_filter_ele filter_column admin_class filter_conditions %}
-                                        </div>
+                                        {% build_filter_ele filter_column admin_class filter_conditions %}
                                     </div>
                                 </div>
                                 {% else %}
-                                <div class="col-md-1">
+                                <div class="span2">
                                     <div class="text-center">
                                         <a >{% if filter_column == 'status' %}状态
                                         {% elif filter_column == 'resolvents' %}解决方案
@@ -78,33 +49,52 @@
                                 </div>
                                 {% endif %}
                             {% endfor %}
-                            <div class="col-md-3" >
-                                <div class="row">
-                                    <div class="text-left">
-                                        <a style="margin-left: 92px">时间段过滤</a>
+
+                            <div class="span5" >
+                                <div class="text-center" style="width: 230px;">
+                                    <a>时间段过滤</a>
+                                    <div class="span4" style="width: 230px">
+                                        <div class="span2" style="width: 110px">
+                                        <select class="form-control" id="startdate">
+                                            <option value="">开始日期</option>
+                                            {% build_start_date admin_class %}
+                                        </select>
                                     </div>
-                                    <div class="col-md-5 col-sm-7">
-                                        <input type="text" class="form-control" placeholder="起始日期" id="startdate" >
+                                    <div class="span2" style="width: 105px" >
+                                        <select class="form-control" id="enddate">
+                                            <option value="">结束日期</option>
+                                            {% build_start_date admin_class %}
+                                        </select>
                                     </div>
-                                    <div class="col-md-5 col-sm-7" style="margin-left: -25px">
-                                        <input type="text" class="form-control" placeholder="结束日期" id="enddate" >
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-1">
-                                <button class="btn btn-success" style="margin-top: 15px; margin-left: -80px">过滤</button>
+                                {% if admin_class.list_filter %}
+                                    <div class="span1" style="width: 10px">
+                                        <button class="btn btn-success" style="margin-top: 15px;">过滤</button>
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-2 col-md-offset-2">
-                                <a style="margin-top: 15px; margin-left: 30px" class="btn btn-success" id="cs_export">
-                                    导出{% build_project_verbose_name admin_class %}
-                                </a>
+                        </form>
+                        <form class="navbar-form navbar-right" >
+                            <div class="form-group" >
+                                <input type="text" class="form-control" style="width: 70%;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                                <button type="submit" class="btn btn-success btn-sm ">搜索</button>
                             </div>
-                        </div>
 
+                        </form>
+                    {% else%}
+                        <form class="navbar-form navbar-right" >
+                        <div class="form-group" >
+                            <input type="text" class="form-control" style="width: 70%;font-size: 12px" name="_q" value="{% if q_val %}{{ q_val }}{% endif %}" placeholder="{% for s_field in admin_class.list_filter%}{{ s_field }} {% endfor %}" PLACEHOLDER="搜索" />
+                            <button type="submit" class="btn btn-success btn-sm ">搜索</button>
+                        </div>
                     </form>
+                    {% endif %}
+
+
 
                 </div>
-                <p></p>
                 <div class="row-fluid">
                     <form method="post" >{% csrf_token %}
                         <div style="overflow: scroll">
@@ -272,25 +262,9 @@
 
 
 <script>
-$(function () {
-    setTime();
-})
+
 
 $("#screen_timeout").on('click',function () {
-    if (this.checked) {
-        this.value = 1;
-    } else {
-        this.value = 0;
-    }
-});
-
-$("#startdate").on('click',function () {
-    this.change(function () {
-        console.log('value',this.value)
-    })
-})
-
-$("#screen_vip").on('click',function () {
     if (this.checked) {
         this.value = 1;
     } else {
@@ -388,32 +362,6 @@ function checkAll(self) {
     }else {
          $("table .row-obj").prop('checked',false)
     }
-}
-
-$("#cs_export").on('click',function () {
-    var startdate = document.getElementById('startdate').value;
-    var enddate = document.getElementById('enddate').value;
-    if (startdate == "" || enddate == ""){
-        alert('时间选择不正确，将导出全部工单')
-        this.href="/apps/job/export/?startdate="+startdate+"&enddate="+enddate
-    }
-    else {
-        this.href="/apps/job/export/?startdate="+startdate+"&enddate="+enddate
-    }
-})
-
-function setTime() {
-
-    laydate.render({
-    elem: '#startdate',
-    type: 'datetime',
-    });
-
-    laydate.render({
-    elem: '#enddate',
-    type: 'datetime',
-    });
-
 }
 
 </script>

@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^apps/', include("csops.urls")),
     url(r'^accounts/login/', views.account_login),
     url(r'^accounts/logout/', views.account_logout),
+    url(r'^change_password/', views.change_password_obj),
     url(r'^$', views.index),
 ]

@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="/static/css/matrix-media.css" />
 <link rel="stylesheet" href="/static/css/iconfont.css" />
 <link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet" />
+
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -36,6 +37,56 @@
             </ul>
         </li>
     </ul>
+</div>
+<div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
+    <div class="modal-dialog" role="document">
+        <form class="form-horizontal">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">当前登录账户：</label>
+                    <div class="col-sm-7" style="top: 12px">{{ request.user }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">旧密码：</label>
+                    <div class="col-sm-7">
+                        <input type="password" name="old_password" class="form-control" required autocomplete='tel' id="old_password">
+                        <span style="color:gray;font-size: 10px"></span>
+                      <span style="color: red">  </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">新密码：</label>
+                    <div class="col-sm-7">
+                            <input type="password" name="new_password" class="form-control" required autocomplete='tel' id="new_password">
+                        <span style="color:gray;font-size: 10px"></span>
+                      <span style="color: red">  </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">重新输入：</label>
+                    <div class="col-sm-7">
+                            <input type="password" name="re_password" class="form-control" required autocomplete='tel' id="re_password">
+                        <span style="color:gray;font-size: 10px"></span>
+                      <span style="color: red">  </span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <input id="save" type="button" class="btn btn-primary" value="保存" />
+            </div>
+        </div>
+        </form>
+    </div>
 </div>
 
 
@@ -148,5 +199,6 @@ function resetMenu() {
    document.gomenu.selector.selectedIndex = 2;
 }
 </script>
+
 </body>
 </html>

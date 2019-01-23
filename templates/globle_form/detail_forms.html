@@ -1,6 +1,7 @@
 {% extends 'bash/bash-index.html' %}
 {% block head%}
-
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
 {% endblock %}
 {% block centent %}
 {% load deploy_tag %}
@@ -33,6 +34,23 @@
                                     {% for row in form_obj %}
                                         {% build_job_detail admin_class row %}
                                     {% endfor %}
+                                    <tr>
+                                        <td>图片</td>
+                                        <td>
+                                            <ul class="thumbnails">
+                                                {% for path in imagelist %}
+                                                <li class="span2" style="width: 200px;">
+                                                    <a> <img src="{{ path.image__imagepath }}" style="width: 100%; height: 100%;" alt="" > </a>
+                                                    <div class="actions" >
+                                                        <a class="lightbox_trigger" href="{{ path.image__imagepath }}">
+                                                            <i class="icon-search" ></i>
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
